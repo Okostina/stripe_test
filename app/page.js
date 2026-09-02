@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+const PURPLE = "#635bff"; // Stripe's brand purple ("Blurple")
+
 const subscriptionPerks = [
   "Unlimited AI itinerary planning",
   "Personalized destination recommendations",
@@ -124,7 +126,7 @@ function FeatureIcon({ name }) {
         height: 56,
         flexShrink: 0,
         borderRadius: 12,
-        border: "1.5px solid #1d1d1f",
+        border: `1.5px solid ${PURPLE}`,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -136,7 +138,7 @@ function FeatureIcon({ name }) {
         height="26"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="#1d1d1f"
+        stroke={PURPLE}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -166,7 +168,8 @@ function FeatureRow({ heading, body, example, icon, reverse }) {
             margin: "0 0 10px",
             fontSize: 19,
             fontWeight: 700,
-            background: "#f4e9b8",
+            background: PURPLE,
+            color: "#fff",
             padding: "2px 8px",
             borderRadius: 4,
           }}
@@ -197,7 +200,7 @@ function PlanCard({ eyebrow, title, price, cadence, perks, cta, loading, onSubsc
   return (
     <div
       style={{
-        border: "2px solid #1d1d1f",
+        border: `2px solid ${PURPLE}`,
         borderRadius: 16,
         padding: "32px 28px",
         background: "#fff",
@@ -213,7 +216,7 @@ function PlanCard({ eyebrow, title, price, cadence, perks, cta, loading, onSubsc
           fontSize: 13,
           fontWeight: 600,
           letterSpacing: 0.5,
-          color: "#8a6d3b",
+          color: PURPLE,
           textTransform: "uppercase",
         }}
       >
@@ -249,7 +252,7 @@ function PlanCard({ eyebrow, title, price, cadence, perks, cta, loading, onSubsc
           padding: "12px 20px",
           borderRadius: 10,
           border: "none",
-          background: "#1d1d1f",
+          background: PURPLE,
           color: "#fff",
           fontSize: 15,
           fontWeight: 600,
@@ -267,15 +270,16 @@ function TestCredentials() {
   return (
     <div
       style={{
+        width: "100%",
         maxWidth: 380,
         margin: "24px auto 0",
-        border: "1px dashed #c9c0af",
+        border: `1px dashed ${PURPLE}`,
         borderRadius: 12,
         padding: "18px 20px",
-        background: "#fbf9f4",
+        background: "#f5f4ff",
       }}
     >
-      <p style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 700, color: "#6b6b6b" }}>
+      <p style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 700, color: PURPLE }}>
         TEST MODE — SAMPLE PAYMENT DETAILS
       </p>
       {[...TEST_CARDS, ...TEST_IBANS].map((c) => (
@@ -351,7 +355,7 @@ function SubscriptionsPanel() {
         width: "100%",
         maxWidth: 320,
         flexShrink: 0,
-        border: "1px solid #e3ddd3",
+        border: `1px solid ${PURPLE}`,
         borderRadius: 16,
         padding: "20px 18px",
         background: "#fff",
@@ -368,14 +372,15 @@ function SubscriptionsPanel() {
           marginBottom: 4,
         }}
       >
-        <h3 style={{ margin: 0, fontSize: 15 }}>Live subscriptions</h3>
+        <h3 style={{ margin: 0, fontSize: 15, color: PURPLE }}>Live subscriptions</h3>
         <button
           onClick={load}
           disabled={loading}
           title="Re-fetch from Stripe"
           style={{
-            border: "1px solid #d8d2c4",
-            background: "#fbf9f4",
+            border: `1px solid ${PURPLE}`,
+            background: PURPLE,
+            color: "#fff",
             borderRadius: 8,
             padding: "4px 10px",
             fontSize: 12,
@@ -475,29 +480,50 @@ export default function Home() {
         maxWidth: 1200,
         margin: "0 auto",
         padding: "64px 24px 96px",
-        display: "flex",
-        gap: 40,
-        alignItems: "flex-start",
-        flexWrap: "wrap-reverse",
-        justifyContent: "center",
       }}
     >
-      <main style={{ flex: "1 1 560px", maxWidth: 900 }}>
-        <div style={{ textAlign: "center", marginBottom: 72 }}>
-          <h1 style={{ fontSize: 40, marginBottom: 12 }}>🦙 Llama Inc.</h1>
-          <p style={{ fontSize: 18, color: "#4a4a4a", maxWidth: 560, margin: "0 auto" }}>
-            Your AI travel assistant. Plan trips in seconds, and get real help
-            the moment something goes wrong.
-          </p>
-        </div>
+      <div style={{ textAlign: "center", marginBottom: 72 }}>
+        <h1 style={{ fontSize: 40, marginBottom: 12 }}>🦙 Llama Inc.</h1>
+        <p style={{ fontSize: 18, color: "#4a4a4a", maxWidth: 560, margin: "0 auto" }}>
+          Your AI travel assistant. Plan trips in seconds, and get real help
+          the moment something goes wrong.
+        </p>
+      </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 48, marginBottom: 80 }}>
-          {FEATURES.map((feature, i) => (
-            <FeatureRow key={feature.heading} {...feature} reverse={i % 2 === 1} />
-          ))}
-        </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 48,
+          marginBottom: 80,
+          maxWidth: 900,
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
+      >
+        {FEATURES.map((feature, i) => (
+          <FeatureRow key={feature.heading} {...feature} reverse={i % 2 === 1} />
+        ))}
+      </div>
 
-        <div style={{ display: "flex", justifyContent: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: 40,
+          alignItems: "flex-start",
+          flexWrap: "wrap-reverse",
+          justifyContent: "center",
+        }}
+      >
+        <main
+          style={{
+            flex: "0 1 380px",
+            maxWidth: 380,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
           <PlanCard
             eyebrow="Subscription"
             title="Travel Advice Pro"
@@ -508,18 +534,18 @@ export default function Home() {
             loading={loading}
             onSubscribe={handleSubscribe}
           />
-        </div>
 
-        {errorMessage && (
-          <p style={{ textAlign: "center", color: "#b3261e", marginTop: 24 }}>
-            {errorMessage}
-          </p>
-        )}
+          {errorMessage && (
+            <p style={{ textAlign: "center", color: "#b3261e", marginTop: 24 }}>
+              {errorMessage}
+            </p>
+          )}
 
-        <TestCredentials />
-      </main>
+          <TestCredentials />
+        </main>
 
-      <SubscriptionsPanel />
+        <SubscriptionsPanel />
+      </div>
     </div>
   );
 }
