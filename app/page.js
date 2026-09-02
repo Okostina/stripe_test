@@ -2,13 +2,6 @@
 
 import { useState } from "react";
 
-const adHocPerks = [
-  "Emergency rebooking when a flight is cancelled or delayed",
-  "Visa & travel-document expediting",
-  "24/7 live agent escalation mid-trip",
-  "One-off local expert consultations",
-];
-
 const subscriptionPerks = [
   "Unlimited AI itinerary planning",
   "Personalized destination recommendations",
@@ -23,14 +16,13 @@ function PlanCard({
   cadence,
   perks,
   cta,
-  highlight,
   loading,
   onSubscribe,
 }) {
   return (
     <div
       style={{
-        border: highlight ? "2px solid #1d1d1f" : "1px solid #e3ddd3",
+        border: "2px solid #1d1d1f",
         borderRadius: 16,
         padding: "32px 28px",
         background: "#fff",
@@ -85,8 +77,8 @@ function PlanCard({
           padding: "12px 20px",
           borderRadius: 10,
           border: "none",
-          background: highlight ? "#1d1d1f" : "#f1ece3",
-          color: highlight ? "#fff" : "#1d1d1f",
+          background: "#1d1d1f",
+          color: "#fff",
           fontSize: 15,
           fontWeight: 600,
           cursor: loading ? "default" : "pointer",
@@ -100,18 +92,16 @@ function PlanCard({
 }
 
 export default function Home() {
-  const [loadingPlan, setLoadingPlan] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  async function handleSubscribe(plan) {
+  async function handleSubscribe() {
     setErrorMessage("");
-    setLoadingPlan(plan);
+    setLoading(true);
     try {
-      const endpoint =
-        plan === "subscription"
-          ? "/api/checkout/subscription"
-          : "/api/checkout/concierge";
-      const res = await fetch(endpoint, { method: "POST" });
+      const res = await fetch("/api/checkout/subscription", {
+        method: "POST",
+      });
       const data = await res.json();
       if (!res.ok || !data.url) {
         throw new Error(data.error || "Something went wrong");
@@ -119,7 +109,7 @@ export default function Home() {
       window.location.href = data.url;
     } catch (err) {
       setErrorMessage(err.message);
-      setLoadingPlan(null);
+      setLoading(false);
     }
   }
 
@@ -155,19 +145,8 @@ export default function Home() {
           cadence="/ month"
           perks={subscriptionPerks}
           cta="Subscribe"
-          highlight
-          loading={loadingPlan === "subscription"}
-          onSubscribe={() => handleSubscribe("subscription")}
-        />
-        <PlanCard
-          eyebrow="Pay as you go"
-          title="On-Demand Concierge"
-          price="Save a card"
-          cadence="pay only when you use it"
-          perks={adHocPerks}
-          cta="Save card & continue"
-          loading={loadingPlan === "concierge"}
-          onSubscribe={() => handleSubscribe("concierge")}
+          loading={loading}
+          onSubscribe={handleSubscribe}
         />
       </div>
 
@@ -177,7 +156,14 @@ export default function Home() {
         </p>
       )}
 
-      <p style={{ textAlign: "center", color: "#9a9a9a", fontSize: 13, marginTop: 48 }}>
+      <p
+        style={{
+          textAlign: "center",
+          color: "#9a9a9a",
+          fontSize: 13,
+          marginTop: 48,
+        }}
+      >
         Test mode — no real charges. Use card 4242 4242 4242 4242, any future
         expiry, any CVC.
       </p>
