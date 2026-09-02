@@ -51,6 +51,24 @@ export async function POST(request) {
       break;
     }
 
+    case "invoice.payment_failed": {
+      const invoice = event.data.object;
+      // A renewal (or the initial subscription invoice) failed to collect.
+      // This is the event real dunning logic would hang off of — retry
+      // emails, a "update your card" prompt, eventual cancellation after N
+      // attempts. For now we just log it.
+      console.log(
+        "invoice.payment_failed",
+        "customer:",
+        invoice.customer,
+        "subscription:",
+        invoice.subscription,
+        "attempt_count:",
+        invoice.attempt_count
+      );
+      break;
+    }
+
     case "setup_intent.succeeded": {
       const setupIntent = event.data.object;
       // The moment a Concierge card is tokenized: setupIntent.payment_method
