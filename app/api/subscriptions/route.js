@@ -8,6 +8,19 @@ import { getStripe } from "../../../lib/stripe";
 // every event server-side; this route is a separate, simpler way to prove
 // the integration works end to end without needing infra beyond what's
 // already here.)
+
+// This panel is meant to be shown to whoever's reviewing the integration —
+// not just the shopper who owns the subscription — so we mask emails before
+// they ever leave the server rather than trusting the client to hide them.
+// "ol***@gmail.com": first 2 characters of the local part, then the real
+// domain (useful for telling test accounts apart without exposing who they are).
+function maskEmail(email) {
+  if (!email || typeof email !== "string" || !email.includes("@")) return null;
+  const [local, domain] = email.split("@");
+  const visible = local.slice(0, 2);
+  return `${visible}${"*".repeat(Math.max(local.length - visible.length, 3))}@${domain}`;
+}
+
 export async function GET() {
   try {
     const stripe = getStripe();
@@ -29,9 +42,9 @@ export async function GET() {
         return {
           id: sub.id,
           status: sub.status,
-          customerEmail:
-            (customer && typeof customer === "object" && customer.email) ||
-            null,
+          customerEmail: maskEmail(
+            customer && typeof customer === "object" ? customer.email : null
+          ),
           amount: price?.unit_amount != null ? price.unit_amount / 100 : null,
           currency: price?.currency ? price.currency.toUpperCase() : null,
           interval: price?.recurring?.interval || null,
