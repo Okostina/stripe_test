@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-const PURPLE = "#635bff"; // Stripe's brand purple ("Blurple")
+import styles from "./page.module.css";
 
 const subscriptionPerks = [
   "Unlimited AI itinerary planning",
@@ -17,21 +16,18 @@ const FEATURES = [
     body: "Enter your dates and destination and get a full plan in seconds — flights, stays, and things to do, all balanced against your time.",
     example:
       "Planning a week in Lisbon? Travel Advice Pro drafts a 7-day route balancing must-sees like Belém with quieter spots like Alfama, timing and rough budget included.",
-    icon: "route",
   },
   {
     heading: "Personalized to your style",
     body: "Tell it who's traveling and how you like to move, and it adjusts pacing and picks accordingly — not a generic top-10 list.",
     example:
       "Traveling with toddlers, or planning a long weekend for two? It reshapes the plan around that, not just the destination.",
-    icon: "compass",
   },
   {
     heading: "Price alerts & priority support",
     body: "We keep watching fares after you book, and a real answer is always a message away — not a support ticket queue.",
     example:
       "Ask “is now a good time to book Tokyo in March?” and get a straight answer, plus a nudge later if fares drop.",
-    icon: "bell",
   },
 ];
 
@@ -71,15 +67,16 @@ const TEST_IBANS = [
   },
 ];
 
+// Tuned for the dark departures-board background, not the light page.
 const STATUS_COLORS = {
-  active: { bg: "#e4f3e0", fg: "#2b6a1f" },
-  trialing: { bg: "#e3edfa", fg: "#1d4f91" },
-  past_due: { bg: "#fbe8d3", fg: "#9a5a10" },
-  incomplete: { bg: "#eee", fg: "#555" },
-  incomplete_expired: { bg: "#fbe0df", fg: "#a3241c" },
-  canceled: { bg: "#fbe0df", fg: "#a3241c" },
-  unpaid: { bg: "#fbe0df", fg: "#a3241c" },
-  paused: { bg: "#eee", fg: "#555" },
+  active: { fg: "#6fcf97", bg: "rgba(111,207,151,0.14)" },
+  trialing: { fg: "#56ccf2", bg: "rgba(86,204,242,0.14)" },
+  past_due: { fg: "#f5a623", bg: "rgba(245,166,35,0.14)" },
+  incomplete: { fg: "#9aa5c4", bg: "rgba(154,165,196,0.14)" },
+  incomplete_expired: { fg: "#ff8a80", bg: "rgba(255,138,128,0.14)" },
+  canceled: { fg: "#ff8a80", bg: "rgba(255,138,128,0.14)" },
+  unpaid: { fg: "#ff8a80", bg: "rgba(255,138,128,0.14)" },
+  paused: { fg: "#9aa5c4", bg: "rgba(154,165,196,0.14)" },
 };
 
 function formatAmount(amount, currency) {
@@ -103,227 +100,116 @@ function formatDate(unixSeconds) {
   });
 }
 
-function FeatureIcon({ name }) {
-  const icons = {
-    route: (
-      <path d="M5 19c3-1 4-3 4-5s-2-3-2-5 2-4 5-4 5 2 5 4-2 3-2 5 1 4 4 5" />
-    ),
-    compass: (
-      <>
-        <circle cx="12" cy="12" r="8" />
-        <path d="M14.5 9.5 13 13l-3.5 1.5L11 11l3.5-1.5Z" />
-      </>
-    ),
-    bell: (
-      <path d="M7 16v-5a5 5 0 0 1 10 0v5l1.5 2h-13L7 16Zm3.5 3.5a1.7 1.7 0 0 0 3 0" />
-    ),
-  };
+// Decorative only — a handful of bars of varying height, like a ticket barcode.
+const BARCODE_BARS = [6, 12, 8, 16, 5, 14, 9, 12, 6, 16, 8, 10, 5, 13, 7];
 
+function FeatureRow({ heading, body, example }) {
   return (
-    <div
-      style={{
-        width: 56,
-        height: 56,
-        flexShrink: 0,
-        borderRadius: 12,
-        border: `1.5px solid ${PURPLE}`,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "#fff",
-      }}
-    >
-      <svg
-        width="26"
-        height="26"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke={PURPLE}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        {icons[name]}
-      </svg>
+    <div className={styles.stop}>
+      <span className={styles.stopDot} aria-hidden="true" />
+      <h3 className={styles.stopHeading}>{heading}</h3>
+      <p className={styles.stopBody}>{body}</p>
+      <p className={styles.stopExample}>
+        <strong>Example: </strong>
+        {example}
+      </p>
     </div>
   );
 }
 
-function FeatureRow({ heading, body, example, icon, reverse }) {
+function BoardingPass({ loading, onSubscribe }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: 20,
-        alignItems: "flex-start",
-        flexDirection: reverse ? "row-reverse" : "row",
-        textAlign: reverse ? "right" : "left",
-      }}
-    >
-      <FeatureIcon name={icon} />
-      <div style={{ flex: 1 }}>
-        <h3
-          style={{
-            display: "inline-block",
-            margin: "0 0 10px",
-            fontSize: 19,
-            fontWeight: 700,
-            background: PURPLE,
-            color: "#fff",
-            padding: "2px 8px",
-            borderRadius: 4,
-          }}
-        >
-          {heading}
-        </h3>
-        <p style={{ margin: 0, color: "#4a4a4a", lineHeight: 1.55, fontSize: 15 }}>
-          {body}
-        </p>
-        <p
-          style={{
-            margin: "10px 0 0",
-            color: "#6b6b6b",
-            fontStyle: "italic",
-            lineHeight: 1.55,
-            fontSize: 14,
-          }}
-        >
-          <strong style={{ fontStyle: "normal" }}>Example: </strong>
-          {example}
-        </p>
+    <div className={styles.boardingPass}>
+      <div className={styles.bpHeader}>
+        <span className={styles.bpHeaderLabel}>Boarding pass</span>
+        <span className={styles.barcode} aria-hidden="true">
+          {BARCODE_BARS.map((h, i) => (
+            <span key={i} style={{ height: h }} />
+          ))}
+        </span>
       </div>
-    </div>
-  );
-}
 
-function PlanCard({ eyebrow, title, price, cadence, perks, cta, loading, onSubscribe }) {
-  return (
-    <div
-      style={{
-        border: `2px solid ${PURPLE}`,
-        borderRadius: 16,
-        padding: "32px 28px",
-        background: "#fff",
-        display: "flex",
-        flexDirection: "column",
-        gap: 16,
-        width: "100%",
-        maxWidth: 380,
-      }}
-    >
-      <span
-        style={{
-          fontSize: 13,
-          fontWeight: 600,
-          letterSpacing: 0.5,
-          color: PURPLE,
-          textTransform: "uppercase",
-        }}
-      >
-        {eyebrow}
-      </span>
-      <h2 style={{ margin: 0, fontSize: 24 }}>{title}</h2>
-      <div>
-        <span style={{ fontSize: 36, fontWeight: 700 }}>{price}</span>
-        {cadence && <span style={{ color: "#6b6b6b" }}> {cadence}</span>}
+      <div className={styles.bpPriceRow}>
+        <span className={styles.bpAmount}>€5</span>
+        <span className={styles.bpCadence}>/ month, billed by Stripe</span>
       </div>
-      <ul
-        style={{
-          margin: 0,
-          padding: 0,
-          listStyle: "none",
-          display: "flex",
-          flexDirection: "column",
-          gap: 10,
-        }}
-      >
-        {perks.map((perk) => (
-          <li key={perk} style={{ display: "flex", gap: 8, fontSize: 15, lineHeight: 1.4 }}>
-            <span>✓</span>
-            <span>{perk}</span>
-          </li>
-        ))}
-      </ul>
+      <p className={styles.bpTitle}>Travel Advice Pro</p>
+
+      <div className={styles.bpDivider} />
+
+      <div className={styles.bpFields}>
+        <div className={styles.bpField}>
+          <label>Passenger</label>
+          <span className={styles.bpFieldValue}>You</span>
+        </div>
+        <div className={styles.bpField}>
+          <label>Fare class</label>
+          <span className={styles.bpFieldValue}>Pro</span>
+        </div>
+        <div className={styles.bpField}>
+          <label>Cycle</label>
+          <span className={styles.bpFieldValue}>Monthly</span>
+        </div>
+        <div className={styles.bpField}>
+          <label>Access</label>
+          <span className={styles.bpFieldValue}>Instant</span>
+        </div>
+      </div>
+
+      <div className={styles.bpPerks}>
+        <p className={styles.bpPerksLabel}>Included</p>
+        <ul>
+          {subscriptionPerks.map((perk) => (
+            <li key={perk}>
+              <span>✓</span>
+              <span>{perk}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
       <button
+        className={styles.bpCta}
         onClick={onSubscribe}
         disabled={loading}
-        style={{
-          marginTop: "auto",
-          padding: "12px 20px",
-          borderRadius: 10,
-          border: "none",
-          background: PURPLE,
-          color: "#fff",
-          fontSize: 15,
-          fontWeight: 600,
-          cursor: loading ? "default" : "pointer",
-          opacity: loading ? 0.6 : 1,
-        }}
       >
-        {loading ? "Redirecting to Stripe…" : cta}
+        {loading ? "Redirecting to Stripe…" : "Subscribe"}
       </button>
     </div>
   );
 }
 
-function TestCredentials() {
+function TestNotice() {
   return (
-    <div
-      style={{
-        width: "100%",
-        maxWidth: 380,
-        margin: "24px auto 0",
-        border: `1px dashed ${PURPLE}`,
-        borderRadius: 12,
-        padding: "18px 20px",
-        background: "#f5f4ff",
-      }}
-    >
-      <p style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 700, color: PURPLE }}>
-        TEST MODE — SAMPLE PAYMENT DETAILS
-      </p>
+    <div className={styles.notice}>
+      <p className={styles.noticeLabel}>Test mode — sample payment details</p>
       {[...TEST_CARDS, ...TEST_IBANS].map((c) => (
-        <div key={c.value} style={{ marginBottom: 10 }}>
-          <div style={{ fontSize: 13, color: "#4a4a4a" }}>{c.label}</div>
-          <code
-            style={{
-              fontSize: 13,
-              background: "#f1ece3",
-              padding: "1px 6px",
-              borderRadius: 4,
-            }}
-          >
-            {c.value}
-          </code>
-          <div style={{ fontSize: 12, color: "#9a9a9a" }}>{c.note}</div>
+        <div key={c.value} className={styles.noticeItem}>
+          <div className={styles.noticeItemLabel}>{c.label}</div>
+          <code className={styles.noticeCode}>{c.value}</code>
+          <div className={styles.noticeNote}>{c.note}</div>
         </div>
       ))}
     </div>
   );
 }
 
-function StatusBadge({ status }) {
-  const colors = STATUS_COLORS[status] || { bg: "#eee", fg: "#555" };
+function StatusTag({ status }) {
+  const colors = STATUS_COLORS[status] || {
+    fg: "#b8c0d9",
+    bg: "rgba(184,192,217,0.14)",
+  };
   return (
     <span
-      style={{
-        display: "inline-block",
-        padding: "2px 8px",
-        borderRadius: 999,
-        fontSize: 11,
-        fontWeight: 700,
-        letterSpacing: 0.3,
-        textTransform: "uppercase",
-        background: colors.bg,
-        color: colors.fg,
-      }}
+      className={styles.boardStatus}
+      style={{ color: colors.fg, background: colors.bg }}
     >
       {status.replace(/_/g, " ")}
     </span>
   );
 }
 
-function SubscriptionsPanel() {
+function DeparturesBoard() {
   const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -350,101 +236,49 @@ function SubscriptionsPanel() {
   }, []);
 
   return (
-    <aside
-      style={{
-        width: "100%",
-        maxWidth: 320,
-        flexShrink: 0,
-        border: `1px solid ${PURPLE}`,
-        borderRadius: 16,
-        padding: "20px 18px",
-        background: "#fff",
-        alignSelf: "flex-start",
-        position: "sticky",
-        top: 24,
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 4,
-        }}
-      >
-        <h3 style={{ margin: 0, fontSize: 15, color: PURPLE }}>Live subscriptions</h3>
+    <aside className={styles.board}>
+      <div className={styles.boardHeader}>
+        <h3 className={styles.boardTitle}>Live subscriptions</h3>
         <button
           onClick={load}
           disabled={loading}
           title="Re-fetch from Stripe"
-          style={{
-            border: `1px solid ${PURPLE}`,
-            background: PURPLE,
-            color: "#fff",
-            borderRadius: 8,
-            padding: "4px 10px",
-            fontSize: 12,
-            fontWeight: 600,
-            cursor: loading ? "default" : "pointer",
-            opacity: loading ? 0.6 : 1,
-          }}
+          className={styles.boardRefresh}
         >
           {loading ? "…" : "↻ Refresh"}
         </button>
       </div>
-      <p style={{ margin: "0 0 14px", fontSize: 11, color: "#9a9a9a" }}>
+      <p className={styles.boardMeta}>
         Read live from the Stripe API on each refresh — test mode.
         {lastFetched && ` Last checked ${lastFetched.toLocaleTimeString()}.`}
       </p>
 
-      {error && (
-        <p style={{ color: "#b3261e", fontSize: 13 }}>Couldn't load: {error}</p>
-      )}
+      {error && <p className={styles.boardError}>Couldn't load: {error}</p>}
 
       {!error && !loading && subscriptions.length === 0 && (
-        <p style={{ fontSize: 13, color: "#6b6b6b" }}>
-          No subscriptions yet — subscribe above and hit refresh to see it
-          appear here.
+        <p className={styles.boardEmpty}>
+          No subscriptions yet — subscribe and hit refresh to see it appear
+          here.
         </p>
       )}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <div className={styles.boardRows}>
         {subscriptions.map((sub) => (
-          <div
-            key={sub.id}
-            style={{
-              border: "1px solid #eee",
-              borderRadius: 10,
-              padding: "10px 12px",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 6,
-              }}
-            >
-              <span style={{ fontSize: 13, fontWeight: 700 }}>
+          <div key={sub.id} className={styles.boardRow}>
+            <div className={styles.boardRowTop}>
+              <span className={styles.boardAmount}>
                 {formatAmount(sub.amount, sub.currency)}
                 {sub.interval && (
-                  <span style={{ fontWeight: 400, color: "#9a9a9a" }}>
-                    {" "}
-                    / {sub.interval}
-                  </span>
+                  <span className={styles.boardInterval}> / {sub.interval}</span>
                 )}
               </span>
-              <StatusBadge status={sub.status} />
+              <StatusTag status={sub.status} />
             </div>
             {sub.customerEmail && (
-              <div style={{ fontSize: 12, color: "#6b6b6b", marginBottom: 4 }}>
-                {sub.customerEmail}
-              </div>
+              <div className={styles.boardEmail}>{sub.customerEmail}</div>
             )}
-            <div style={{ fontSize: 11, color: "#9a9a9a" }}>
-              Current cycle:{" "}
-              {sub.latestInvoiceStatus ? sub.latestInvoiceStatus : "—"} · renews{" "}
+            <div className={styles.boardCycle}>
+              Current cycle: {sub.latestInvoiceStatus || "—"} · renews{" "}
               {formatDate(sub.currentPeriodEnd)}
             </div>
           </div>
@@ -475,76 +309,36 @@ export default function Home() {
   }
 
   return (
-    <div
-      style={{
-        maxWidth: 1200,
-        margin: "0 auto",
-        padding: "64px 24px 96px",
-      }}
-    >
-      <div style={{ textAlign: "center", marginBottom: 72 }}>
-        <h1 style={{ fontSize: 40, marginBottom: 12 }}>🦙 Llama Inc.</h1>
-        <p style={{ fontSize: 18, color: "#4a4a4a", maxWidth: 560, margin: "0 auto" }}>
-          Your AI travel assistant. Plan trips in seconds, and get real help
-          the moment something goes wrong.
+    <div className={styles.page}>
+      <header className={styles.hero}>
+        <div className={styles.brandRow}>
+          <span className={styles.brandMark} aria-hidden="true">
+            🦙
+          </span>
+          <p className={styles.eyebrow}>Llama Inc. · AI travel assistant</p>
+        </div>
+        <h1>Travel plans that don't fall apart when reality does.</h1>
+        <p>
+          AI itinerary planning that adapts to you, plus a real answer the
+          moment something goes wrong — no ticket queue.
         </p>
-      </div>
+      </header>
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 48,
-          marginBottom: 80,
-          maxWidth: 900,
-          marginLeft: "auto",
-          marginRight: "auto",
-        }}
-      >
-        {FEATURES.map((feature, i) => (
-          <FeatureRow key={feature.heading} {...feature} reverse={i % 2 === 1} />
+      <div className={styles.route}>
+        <div className={styles.routeLine} aria-hidden="true" />
+        {FEATURES.map((feature) => (
+          <FeatureRow key={feature.heading} {...feature} />
         ))}
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          gap: 40,
-          alignItems: "flex-start",
-          flexWrap: "wrap-reverse",
-          justifyContent: "center",
-        }}
-      >
-        <main
-          style={{
-            flex: "0 1 380px",
-            maxWidth: 380,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <PlanCard
-            eyebrow="Subscription"
-            title="Travel Advice Pro"
-            price="€5"
-            cadence="/ month"
-            perks={subscriptionPerks}
-            cta="Subscribe"
-            loading={loading}
-            onSubscribe={handleSubscribe}
-          />
+      <div className={styles.ticketRow}>
+        <div className={styles.ticketCol}>
+          <BoardingPass loading={loading} onSubscribe={handleSubscribe} />
+          {errorMessage && <p className={styles.errorMsg}>{errorMessage}</p>}
+          <TestNotice />
+        </div>
 
-          {errorMessage && (
-            <p style={{ textAlign: "center", color: "#b3261e", marginTop: 24 }}>
-              {errorMessage}
-            </p>
-          )}
-
-          <TestCredentials />
-        </main>
-
-        <SubscriptionsPanel />
+        <DeparturesBoard />
       </div>
     </div>
   );
