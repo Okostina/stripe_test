@@ -106,7 +106,10 @@ const BARCODE_BARS = [6, 12, 8, 16, 5, 14, 9, 12, 6, 16, 8, 10, 5, 13, 7];
 function FeatureRow({ heading, body, example }) {
   return (
     <div className={styles.stop}>
-      <span className={styles.stopDot} aria-hidden="true" />
+      <div className={styles.stopMarker} aria-hidden="true">
+        <span className={styles.stopDot} />
+        <span className={styles.stopDash} />
+      </div>
       <h3 className={styles.stopHeading}>{heading}</h3>
       <p className={styles.stopBody}>{body}</p>
       <p className={styles.stopExample}>
@@ -325,7 +328,6 @@ export default function Home() {
       </header>
 
       <div className={styles.route}>
-        <div className={styles.routeLine} aria-hidden="true" />
         {FEATURES.map((feature) => (
           <FeatureRow key={feature.heading} {...feature} />
         ))}
@@ -335,8 +337,9 @@ export default function Home() {
         <div className={styles.ticketCol}>
           <BoardingPass loading={loading} onSubscribe={handleSubscribe} />
           {errorMessage && <p className={styles.errorMsg}>{errorMessage}</p>}
-          <TestNotice />
         </div>
+
+        <TestNotice />
 
         <DeparturesBoard />
       </div>

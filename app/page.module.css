@@ -1,9 +1,9 @@
 /* ---------- layout shell ---------- */
 
 .page {
-  max-width: 1200px;
+  max-width: 1360px;
   margin: 0 auto;
-  padding: 96px 24px 120px;
+  padding: 72px 32px 96px;
 }
 
 .eyebrow {
@@ -18,8 +18,8 @@
 /* ---------- hero ---------- */
 
 .hero {
-  max-width: 620px;
-  margin: 0 auto 104px;
+  max-width: 740px;
+  margin: 0 auto 72px;
   text-align: center;
   animation: rise 0.6s ease both;
 }
@@ -70,38 +70,28 @@
 /* ---------- route / features ---------- */
 
 .route {
-  position: relative;
-  max-width: 680px;
-  margin: 0 auto 112px;
-  padding-left: 44px;
-}
-
-.routeLine {
-  position: absolute;
-  left: 9px;
-  top: 8px;
-  bottom: 8px;
-  width: 1px;
-  background-image: linear-gradient(var(--line) 55%, transparent 0%);
-  background-size: 1px 9px;
-  background-repeat: repeat-y;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px 40px;
+  margin: 0 0 80px;
 }
 
 .stop {
-  position: relative;
-  padding-bottom: 58px;
+  min-width: 0;
 }
 
-.stop:last-child {
-  padding-bottom: 0;
+.stopMarker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
 }
 
 .stopDot {
-  position: absolute;
-  left: -44px;
-  top: 3px;
-  width: 19px;
-  height: 19px;
+  position: relative;
+  flex: none;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   background: var(--paper);
   border: 2px solid var(--purple);
@@ -110,17 +100,26 @@
 .stopDot::after {
   content: "";
   position: absolute;
-  inset: 5px;
+  inset: 3px;
   border-radius: 50%;
   background: var(--purple);
+}
+
+.stopDash {
+  flex: 1 1 auto;
+  max-width: 56px;
+  height: 1px;
+  background-image: linear-gradient(to right, var(--line) 55%, transparent 0%);
+  background-size: 7px 1px;
+  background-repeat: repeat-x;
 }
 
 .stopHeading {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 1.32rem;
+  font-size: 1.28rem;
   color: var(--ink);
-  margin: -3px 0 8px;
+  margin: 0 0 8px;
 }
 
 .stopBody {
@@ -128,14 +127,14 @@
   color: #3c4257;
   line-height: 1.6;
   margin: 0 0 12px;
-  font-size: 0.98rem;
+  font-size: 0.96rem;
 }
 
 .stopExample {
   font-family: var(--font-body);
   font-style: italic;
   color: #6b7085;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   line-height: 1.6;
   margin: 0;
   border-left: 2px solid var(--line);
@@ -147,21 +146,19 @@
   color: var(--ink);
 }
 
-/* ---------- ticket row (pricing + board) ---------- */
+/* ---------- ticket row (pricing + notice + board) ---------- */
 
 .ticketRow {
-  display: flex;
-  gap: 40px;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+  align-items: start;
 }
 
 .ticketCol {
-  flex: 1 1 380px;
-  max-width: 400px;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 /* ---------- boarding pass ---------- */
@@ -353,11 +350,11 @@
 /* ---------- test-mode notice ---------- */
 
 .notice {
-  margin-top: 24px;
   border: 1.5px dashed var(--stamp);
   border-radius: 10px;
   padding: 20px 22px;
   background: #fbf3ec;
+  min-width: 0;
 }
 
 .noticeLabel {
@@ -404,9 +401,7 @@
 /* ---------- departures board (live subscriptions) ---------- */
 
 .board {
-  flex: 0 1 360px;
-  max-width: 360px;
-  width: 100%;
+  min-width: 0;
   background: var(--board-bg);
   border-radius: 10px;
   padding: 22px 20px;
@@ -538,17 +533,16 @@
 
 /* ---------- responsive ---------- */
 
+@media (max-width: 860px) {
+  .route {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
 @media (max-width: 640px) {
   .page {
-    padding: 64px 18px 88px;
-  }
-
-  .route {
-    padding-left: 36px;
-  }
-
-  .stopDot {
-    left: -36px;
+    padding: 56px 18px 72px;
   }
 
   .bpFields {
