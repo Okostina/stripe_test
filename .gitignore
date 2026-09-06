@@ -2,3 +2,8 @@ node_modules
 .next
 .vercel
 .env*.local
+
+# interview submission and delivery archives - keep out of the repo
+Olga_Kostina_Stripe_Friction_Log.md
+*.tar.gz
+Claude outputs/

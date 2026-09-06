@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./page.module.css";
 
 const subscriptionPerks = [
@@ -58,7 +58,7 @@ const TEST_IBANS = [
   {
     label: "SEPA — succeeds after ~3 min",
     value: "AT32 1904 3002 3547 3204",
-    note: "Good one for actually seeing the “processing” page above resolve to confirmed.",
+    note: "Good one for actually seeing the “processing” page resolve to confirmed.",
   },
   {
     label: "SEPA — fails",
@@ -66,39 +66,6 @@ const TEST_IBANS = [
     note: "Moves from processing to requires_payment_method.",
   },
 ];
-
-// Tuned for the dark departures-board background, not the light page.
-const STATUS_COLORS = {
-  active: { fg: "#6fcf97", bg: "rgba(111,207,151,0.14)" },
-  trialing: { fg: "#56ccf2", bg: "rgba(86,204,242,0.14)" },
-  past_due: { fg: "#f5a623", bg: "rgba(245,166,35,0.14)" },
-  incomplete: { fg: "#9aa5c4", bg: "rgba(154,165,196,0.14)" },
-  incomplete_expired: { fg: "#ff8a80", bg: "rgba(255,138,128,0.14)" },
-  canceled: { fg: "#ff8a80", bg: "rgba(255,138,128,0.14)" },
-  unpaid: { fg: "#ff8a80", bg: "rgba(255,138,128,0.14)" },
-  paused: { fg: "#9aa5c4", bg: "rgba(154,165,196,0.14)" },
-};
-
-function formatAmount(amount, currency) {
-  if (amount == null || !currency) return "—";
-  try {
-    return new Intl.NumberFormat("en-IE", {
-      style: "currency",
-      currency,
-    }).format(amount);
-  } catch {
-    return `${amount} ${currency}`;
-  }
-}
-
-function formatDate(unixSeconds) {
-  if (!unixSeconds) return "—";
-  return new Date(unixSeconds * 1000).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
 
 // Decorative only — a handful of bars of varying height, like a ticket barcode.
 const BARCODE_BARS = [6, 12, 8, 16, 5, 14, 9, 12, 6, 16, 8, 10, 5, 13, 7];
@@ -197,100 +164,6 @@ function TestNotice() {
   );
 }
 
-function StatusTag({ status }) {
-  const colors = STATUS_COLORS[status] || {
-    fg: "#b8c0d9",
-    bg: "rgba(184,192,217,0.14)",
-  };
-  return (
-    <span
-      className={styles.boardStatus}
-      style={{ color: colors.fg, background: colors.bg }}
-    >
-      {status.replace(/_/g, " ")}
-    </span>
-  );
-}
-
-function DeparturesBoard() {
-  const [subscriptions, setSubscriptions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [lastFetched, setLastFetched] = useState(null);
-
-  async function load() {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await fetch("/api/subscriptions");
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to load");
-      setSubscriptions(data.subscriptions || []);
-      setLastFetched(new Date());
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    load();
-  }, []);
-
-  return (
-    <aside className={styles.board}>
-      <div className={styles.boardHeader}>
-        <h3 className={styles.boardTitle}>Live subscriptions</h3>
-        <button
-          onClick={load}
-          disabled={loading}
-          title="Re-fetch from Stripe"
-          className={styles.boardRefresh}
-        >
-          {loading ? "…" : "↻ Refresh"}
-        </button>
-      </div>
-      <p className={styles.boardMeta}>
-        Read live from the Stripe API on each refresh — test mode.
-        {lastFetched && ` Last checked ${lastFetched.toLocaleTimeString()}.`}
-      </p>
-
-      {error && <p className={styles.boardError}>Couldn't load: {error}</p>}
-
-      {!error && !loading && subscriptions.length === 0 && (
-        <p className={styles.boardEmpty}>
-          No subscriptions yet — subscribe and hit refresh to see it appear
-          here.
-        </p>
-      )}
-
-      <div className={styles.boardRows}>
-        {subscriptions.map((sub) => (
-          <div key={sub.id} className={styles.boardRow}>
-            <div className={styles.boardRowTop}>
-              <span className={styles.boardAmount}>
-                {formatAmount(sub.amount, sub.currency)}
-                {sub.interval && (
-                  <span className={styles.boardInterval}> / {sub.interval}</span>
-                )}
-              </span>
-              <StatusTag status={sub.status} />
-            </div>
-            {sub.customerEmail && (
-              <div className={styles.boardEmail}>{sub.customerEmail}</div>
-            )}
-            <div className={styles.boardCycle}>
-              Current cycle: {sub.latestInvoiceStatus || "—"} · renews{" "}
-              {formatDate(sub.currentPeriodEnd)}
-            </div>
-          </div>
-        ))}
-      </div>
-    </aside>
-  );
-}
-
 export default function Home() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -340,8 +213,6 @@ export default function Home() {
         </div>
 
         <TestNotice />
-
-        <DeparturesBoard />
       </div>
     </div>
   );
