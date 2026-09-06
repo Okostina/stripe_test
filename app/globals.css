@@ -15,8 +15,11 @@
   --purple: #635bff;
   --purple-dark: #4b3fe0;
   --stamp: #c1440e;
-  --board-bg: #101b33;
-  --board-amber: #f5a623;
+
+  /* payment outcome states, used on /success and /cancel */
+  --confirmed: #2b6a1f;
+  --pending: #9a5a10;
+  --failed: #b3261e;
 }
 
 html {

@@ -146,12 +146,13 @@
   color: var(--ink);
 }
 
-/* ---------- ticket row (pricing + notice + board) ---------- */
+/* ---------- ticket row (pricing + test-mode notice) ---------- */
 
 .ticketRow {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 40px;
+  grid-template-columns: repeat(2, minmax(340px, 460px));
+  justify-content: center;
+  gap: 48px;
   align-items: start;
 }
 
@@ -341,7 +342,7 @@
 
 .errorMsg {
   font-family: var(--font-body);
-  color: #b3261e;
+  color: var(--failed);
   text-align: center;
   margin: 18px 0 0;
   font-size: 15px;
@@ -398,144 +399,17 @@
   margin: 2px 0 0;
 }
 
-/* ---------- departures board (live subscriptions) ---------- */
-
-.board {
-  min-width: 0;
-  background: var(--board-bg);
-  border-radius: 12px;
-  padding: 28px 26px;
-  color: #fff;
-  position: sticky;
-  top: 24px;
-  box-shadow: 0 32px 56px -30px rgba(16, 27, 51, 0.65);
-}
-
-.boardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.boardTitle {
-  font-family: var(--font-mono);
-  font-size: 14.5px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--board-amber);
-  margin: 0;
-}
-
-.boardRefresh {
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: transparent;
-  border: 1px solid rgba(245, 166, 35, 0.55);
-  color: var(--board-amber);
-  border-radius: 6px;
-  padding: 7px 12px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.15s ease;
-}
-
-.boardRefresh:hover:not(:disabled) {
-  background: rgba(245, 166, 35, 0.14);
-}
-
-.boardRefresh:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-.boardMeta {
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  line-height: 1.6;
-  color: #8c97b8;
-  margin: 12px 0 20px;
-}
-
-.boardEmpty {
-  font-family: var(--font-body);
-  font-size: 15px;
-  color: #b8c0d9;
-  line-height: 1.5;
-}
-
-.boardError {
-  font-family: var(--font-body);
-  font-size: 15px;
-  color: #ff8a80;
-}
-
-.boardRows {
-  display: flex;
-  flex-direction: column;
-}
-
-.boardRow {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 15px 0;
-}
-
-.boardRow:first-child {
-  border-top: none;
-  padding-top: 4px;
-}
-
-.boardRowTop {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 10px;
-  margin-bottom: 6px;
-}
-
-.boardAmount {
-  font-family: var(--font-mono);
-  font-size: 17px;
-  font-weight: 600;
-  color: #fff;
-}
-
-.boardInterval {
-  font-weight: 400;
-  color: #8c97b8;
-}
-
-.boardStatus {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 5px;
-  white-space: nowrap;
-}
-
-.boardEmail {
-  font-family: var(--font-mono);
-  font-size: 13.5px;
-  color: #b8c0d9;
-  margin-bottom: 3px;
-}
-
-.boardCycle {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: #7c87a6;
-}
-
 /* ---------- responsive ---------- */
 
 @media (min-width: 1800px) {
   .page {
     max-width: 1800px;
+  }
+}
+
+@media (max-width: 980px) {
+  .ticketRow {
+    grid-template-columns: minmax(0, 460px);
   }
 }
 
